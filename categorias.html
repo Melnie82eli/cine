@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Categorías - Cine Admin</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header con información del usuario -->
+        <header class="header">
+            <div class="user-info">
+                <img id="userAvatar" src="" alt="Foto de perfil" class="user-avatar">
+                <span id="userName" class="user-name"></span>
+            </div>
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+            </button>
+        </header>
+
+        <!-- Contenido principal -->
+        <main class="main-content">
+            <div style="max-width: 1200px; margin: 0 auto;">
+                <h1 style="text-align: center; margin-bottom: 40px; color: #333;">
+                    <i class="fas fa-tags"></i> Gestión de Categorías
+                </h1>
+
+                <!-- Formulario para agregar categoría -->
+                <div class="dashboard-card" style="margin-bottom: 30px;">
+                    <h2 style="margin-bottom: 20px; color: #667eea;">
+                        <i class="fas fa-plus"></i> Agregar Nueva Categoría
+                    </h2>
+                    <form id="addCategoryForm">
+                        <div class="form-group">
+                            <i class="fas fa-tag"></i>
+                            <input type="text" id="categoryName" placeholder="Nombre de la categoría" required>
+                        </div>
+                        <div class="form-group">
+                            <i class="fas fa-align-left"></i>
+                            <textarea id="categoryDescription" placeholder="Descripción de la categoría" rows="3" style="width: 100%; padding: 15px 15px 15px 50px; border: 2px solid #e1e5e9; border-radius: 10px; font-size: 1em; resize: vertical;"></textarea>
+                        </div>
+                        <button type="submit" class="btn-login" style="width: auto; padding: 15px 30px;">
+                            <i class="fas fa-plus"></i> Agregar Categoría
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Lista de categorías -->
+                <div class="dashboard-card">
+                    <h2 style="margin-bottom: 20px; color: #667eea;">
+                        <i class="fas fa-list"></i> Categorías Existentes
+                    </h2>
+                    <div id="categoriesList">
+                        <!-- Las categorías se cargarán dinámicamente -->
+                    </div>
+                </div>
+
+                <!-- Botón para volver -->
+                <div style="text-align: center; margin-top: 30px;">
+                    <a href="dashboard.html" class="btn-register" style="display: inline-block; padding: 15px 40px; text-decoration: none;">
+                        <i class="fas fa-arrow-left"></i> Volver al Dashboard
+                    </a>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/dashboard.js"></script>
+    <script src="js/categorias.js"></script>
+</body>
+</html> 

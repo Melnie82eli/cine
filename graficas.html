@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gráficas de Ganancias - Cine Admin</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header con información del usuario -->
+        <header class="header">
+            <div class="user-info">
+                <img id="userAvatar" src="" alt="Foto de perfil" class="user-avatar">
+                <span id="userName" class="user-name"></span>
+            </div>
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+            </button>
+        </header>
+
+        <!-- Contenido principal -->
+        <main class="main-content">
+            <div style="max-width: 1400px; margin: 0 auto;">
+                <h1 style="text-align: center; margin-bottom: 40px; color: #333;">
+                    <i class="fas fa-chart-line"></i> Gráficas de Ganancias
+                </h1>
+
+                <!-- Selector de período -->
+                <div class="dashboard-card" style="margin-bottom: 30px;">
+                    <h2 style="margin-bottom: 20px; color: #667eea;">
+                        <i class="fas fa-calendar"></i> Seleccionar Período
+                    </h2>
+                    <div style="display: flex; gap: 20px; align-items: center; flex-wrap: wrap;">
+                        <button onclick="loadChart('diarias')" class="btn-login" style="width: auto; padding: 15px 30px;">
+                            <i class="fas fa-calendar-day"></i> Ganancias Diarias
+                        </button>
+                        <button onclick="loadChart('semanales')" class="btn-login" style="width: auto; padding: 15px 30px;">
+                            <i class="fas fa-calendar-week"></i> Ganancias Semanales
+                        </button>
+                        <button onclick="loadChart('mensuales')" class="btn-login" style="width: auto; padding: 15px 30px;">
+                            <i class="fas fa-calendar-alt"></i> Ganancias Mensuales
+                        </button>
+                        <button onclick="loadChart('anuales')" class="btn-login" style="width: auto; padding: 15px 30px;">
+                            <i class="fas fa-calendar"></i> Ganancias Anuales
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Resumen de ganancias -->
+                <div class="dashboard-grid" style="margin-bottom: 30px;">
+                    <div class="dashboard-card">
+                        <div class="card-icon">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <div class="card-title">Ganancias Totales</div>
+                        <div id="totalEarnings" style="font-size: 2em; color: #28a745; font-weight: bold;">$0</div>
+                    </div>
+                    <div class="dashboard-card">
+                        <div class="card-icon">
+                            <i class="fas fa-ticket-alt"></i>
+                        </div>
+                        <div class="card-title">Tickets Vendidos</div>
+                        <div id="totalTickets" style="font-size: 2em; color: #667eea; font-weight: bold;">0</div>
+                    </div>
+                    <div class="dashboard-card">
+                        <div class="card-icon">
+                            <i class="fas fa-utensils"></i>
+                        </div>
+                        <div class="card-title">Ventas de Comida</div>
+                        <div id="totalFood" style="font-size: 2em; color: #ffc107; font-weight: bold;">$0</div>
+                    </div>
+                    <div class="dashboard-card">
+                        <div class="card-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="card-title">Promedio por Día</div>
+                        <div id="avgPerDay" style="font-size: 2em; color: #fd7e14; font-weight: bold;">$0</div>
+                    </div>
+                </div>
+
+                <!-- Gráfica principal -->
+                <div class="dashboard-card" style="margin-bottom: 30px;">
+                    <h2 style="margin-bottom: 20px; color: #667eea;">
+                        <i class="fas fa-chart-bar"></i> <span id="chartTitle">Gráfica de Ganancias</span>
+                    </h2>
+                    <div style="position: relative; height: 400px;">
+                        <canvas id="earningsChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Gráfica de distribución -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px;">
+                    <div class="dashboard-card">
+                        <h2 style="margin-bottom: 20px; color: #667eea;">
+                            <i class="fas fa-chart-pie"></i> Distribución por Categoría
+                        </h2>
+                        <div style="position: relative; height: 300px;">
+                            <canvas id="categoryChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="dashboard-card">
+                        <h2 style="margin-bottom: 20px; color: #667eea;">
+                            <i class="fas fa-chart-doughnut"></i> Ventas por Tipo
+                        </h2>
+                        <div style="position: relative; height: 300px;">
+                            <canvas id="typeChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botón para volver -->
+                <div style="text-align: center; margin-top: 30px;">
+                    <a href="dashboard.html" class="btn-register" style="display: inline-block; padding: 15px 40px; text-decoration: none;">
+                        <i class="fas fa-arrow-left"></i> Volver al Dashboard
+                    </a>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/dashboard.js"></script>
+    <script src="js/graficas.js"></script>
+</body>
+</html> 

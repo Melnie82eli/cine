@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Cine Admin</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header con información del usuario -->
+        <header class="header">
+            <div class="user-info">
+                <img id="userAvatar" src="" alt="Foto de perfil" class="user-avatar">
+                <span id="userName" class="user-name"></span>
+            </div>
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+            </button>
+        </header>
+
+        <!-- Contenido principal -->
+        <main class="main-content">
+            <h1 style="text-align: center; margin-bottom: 40px; color: #333; font-size: 2.5em;">
+                <i class="fas fa-tachometer-alt"></i> Dashboard Administrativo
+            </h1>
+
+            <!-- Grid de módulos principales -->
+            <div class="dashboard-grid">
+                <a href="editarPerfil.html" class="dashboard-card">
+                    <div class="card-icon">
+                        <i class="fas fa-user-edit"></i>
+                    </div>
+                    <div class="card-title">Editar Perfil</div>
+                    <div class="card-description">
+                        Modifica tu información personal y foto de perfil
+                    </div>
+                </a>
+
+                <a href="categorias.html" class="dashboard-card">
+                    <div class="card-icon">
+                        <i class="fas fa-tags"></i>
+                    </div>
+                    <div class="card-title">Categorías</div>
+                    <div class="card-description">
+                        Gestiona las categorías de películas
+                    </div>
+                </a>
+
+                <a href="clasificaciones.html" class="dashboard-card">
+                    <div class="card-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="card-title">Clasificaciones</div>
+                    <div class="card-description">
+                        Administra las clasificaciones por edad
+                    </div>
+                </a>
+
+                <a href="agregarPeliculas.html" class="dashboard-card">
+                    <div class="card-icon">
+                        <i class="fas fa-film"></i>
+                    </div>
+                    <div class="card-title">Agregar Películas</div>
+                    <div class="card-description">
+                        Añade nuevas películas al catálogo
+                    </div>
+                </a>
+
+                <a href="agregarComida.html" class="dashboard-card">
+                    <div class="card-icon">
+                        <i class="fas fa-utensils"></i>
+                    </div>
+                    <div class="card-title">Agregar Comida</div>
+                    <div class="card-description">
+                        Gestiona el menú de alimentos y bebidas
+                    </div>
+                </a>
+
+                <a href="clientes.html" class="dashboard-card">
+                    <div class="card-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="card-title">Clientes</div>
+                    <div class="card-description">
+                        Visualiza y gestiona los clientes registrados
+                    </div>
+                </a>
+            </div>
+
+            <!-- Sección de gráficas de ganancias -->
+            <div class="charts-section">
+                <h2 class="charts-title">
+                    <i class="fas fa-chart-line"></i> Ganancias y Estadísticas
+                </h2>
+                
+                <div class="charts-grid">
+                    <a href="graficas.html?tipo=diarias" class="chart-card">
+                        <div class="chart-icon">
+                            <i class="fas fa-calendar-day"></i>
+                        </div>
+                        <div class="chart-title">Ganancias Diarias</div>
+                        <div class="chart-value">$15,420</div>
+                    </a>
+
+                    <a href="graficas.html?tipo=semanales" class="chart-card">
+                        <div class="chart-icon">
+                            <i class="fas fa-calendar-week"></i>
+                        </div>
+                        <div class="chart-title">Ganancias Semanales</div>
+                        <div class="chart-value">$108,750</div>
+                    </a>
+
+                    <a href="graficas.html?tipo=mensuales" class="chart-card">
+                        <div class="chart-icon">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <div class="chart-title">Ganancias Mensuales</div>
+                        <div class="chart-value">$425,680</div>
+                    </a>
+
+                    <a href="graficas.html?tipo=anuales" class="chart-card">
+                        <div class="chart-icon">
+                            <i class="fas fa-calendar"></i>
+                        </div>
+                        <div class="chart-title">Ganancias Anuales</div>
+                        <div class="chart-value">$5.2M</div>
+                    </a>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/dashboard.js"></script>
+</body>
+</html> 

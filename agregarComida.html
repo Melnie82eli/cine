@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agregar Comida - Cine Admin</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header con información del usuario -->
+        <header class="header">
+            <div class="user-info">
+                <img id="userAvatar" src="" alt="Foto de perfil" class="user-avatar">
+                <span id="userName" class="user-name"></span>
+            </div>
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+            </button>
+        </header>
+
+        <!-- Contenido principal -->
+        <main class="main-content">
+            <div style="max-width: 1200px; margin: 0 auto;">
+                <h1 style="text-align: center; margin-bottom: 40px; color: #333;">
+                    <i class="fas fa-utensils"></i> Gestión de Menú
+                </h1>
+
+                <!-- Formulario para agregar comida -->
+                <div class="dashboard-card" style="margin-bottom: 30px;">
+                    <h2 style="margin-bottom: 20px; color: #667eea;">
+                        <i class="fas fa-plus"></i> Agregar Nuevo Producto
+                    </h2>
+                    <form id="addFoodForm">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                            <div class="form-group">
+                                <i class="fas fa-utensils"></i>
+                                <input type="text" id="foodName" placeholder="Nombre del producto" required>
+                            </div>
+                            <div class="form-group">
+                                <i class="fas fa-tag"></i>
+                                <select id="foodType" required style="width: 100%; padding: 15px 15px 15px 50px; border: 2px solid #e1e5e9; border-radius: 10px; font-size: 1em;">
+                                    <option value="">Seleccionar tipo</option>
+                                    <option value="comida">Comida</option>
+                                    <option value="bebida">Bebida</option>
+                                    <option value="dulce">Dulce</option>
+                                    <option value="snack">Snack</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                            <div class="form-group">
+                                <i class="fas fa-dollar-sign"></i>
+                                <input type="number" id="foodPrice" placeholder="Precio" min="0" step="0.01" required>
+                            </div>
+                            <div class="form-group">
+                                <i class="fas fa-box"></i>
+                                <input type="text" id="foodStock" placeholder="Stock disponible" min="0" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <i class="fas fa-align-left"></i>
+                            <textarea id="foodDescription" placeholder="Descripción del producto" rows="3" style="width: 100%; padding: 15px 15px 15px 50px; border: 2px solid #e1e5e9; border-radius: 10px; font-size: 1em; resize: vertical;"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <i class="fas fa-image"></i>
+                            <input type="file" id="foodImage" accept="image/*" required>
+                            <label for="foodImage" class="file-label">Seleccionar imagen del producto</label>
+                        </div>
+
+                        <button type="submit" class="btn-login" style="width: auto; padding: 15px 30px;">
+                            <i class="fas fa-plus"></i> Agregar Producto
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Lista de productos -->
+                <div class="dashboard-card">
+                    <h2 style="margin-bottom: 20px; color: #667eea;">
+                        <i class="fas fa-list"></i> Productos Existentes
+                    </h2>
+                    <div id="foodList">
+                        <!-- Los productos se cargarán dinámicamente -->
+                    </div>
+                </div>
+
+                <!-- Botón para volver -->
+                <div style="text-align: center; margin-top: 30px;">
+                    <a href="dashboard.html" class="btn-register" style="display: inline-block; padding: 15px 40px; text-decoration: none;">
+                        <i class="fas fa-arrow-left"></i> Volver al Dashboard
+                    </a>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/dashboard.js"></script>
+    <script src="js/agregarComida.js"></script>
+</body>
+</html> 
