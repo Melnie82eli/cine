@@ -29,16 +29,16 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                alert('Producto agregado exitosamente');
+                Swal.fire({ icon: 'success', title: 'Éxito', text: 'Producto agregado exitosamente' });
                 document.getElementById('addFoodForm').reset();
                 loadFood();
             } else {
-                alert('Error: ' + data.message);
+                Swal.fire({ icon: 'error', title: 'Error', text: 'Error: ' + data.message });
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Error al agregar el producto');
+            Swal.fire({ icon: 'error', title: 'Error', text: 'Error al agregar el producto' });
         });
     });
 });
@@ -112,31 +112,43 @@ function displayFood(food) {
 
 function editFood(id) {
     // Implementar edición de producto
-    alert('Función de edición en desarrollo');
+    Swal.fire({
+        title: 'En desarrollo',
+        text: 'Función de edición en desarrollo',
+        icon: 'info'
+    });
 }
 
 function deleteFood(id) {
-    if (confirm('¿Está seguro de que desea eliminar este producto?')) {
-        const formData = new FormData();
-        formData.append('action', 'deleteFood');
-        formData.append('id', id);
+    Swal.fire({
+        title: '¿Está seguro de que desea eliminar este producto?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const formData = new FormData();
+            formData.append('action', 'deleteFood');
+            formData.append('id', id);
 
-        fetch('php/comida.php', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Producto eliminado exitosamente');
-                loadFood();
-            } else {
-                alert('Error: ' + data.message);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Error al eliminar el producto');
-        });
-    }
+            fetch('php/comida.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({ icon: 'success', title: 'Éxito', text: 'Producto eliminado exitosamente' });
+                    loadFood();
+                } else {
+                    Swal.fire({ icon: 'error', title: 'Error', text: 'Error: ' + data.message });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({ icon: 'error', title: 'Error', text: 'Error al eliminar el producto' });
+            });
+        }
+    });
 } 

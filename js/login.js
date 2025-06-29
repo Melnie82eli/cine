@@ -46,12 +46,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     window.location.href = 'cliente.html';
                 }
             } else {
-                alert('Error: ' + data.message);
+                Swal.fire({ icon: 'error', title: 'Error', text: data.message });
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Error al conectar con el servidor');
+            Swal.fire({ icon: 'error', title: 'Error', text: 'Error al conectar con el servidor' });
         });
     });
 
@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const profileImage = document.getElementById('profileImage').files[0];
 
         if (!profileImage) {
-            alert('Por favor selecciona una foto de perfil');
+            Swal.fire({ icon: 'warning', title: 'Advertencia', text: 'Por favor selecciona una foto de perfil' });
             return;
         }
 
@@ -84,19 +84,19 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                alert('Registro exitoso! Ahora puedes iniciar sesión.');
+                Swal.fire({ icon: 'success', title: '¡Registro exitoso!', text: 'Ahora puedes iniciar sesión.' });
                 // Cambiar al formulario de login
                 registerForm.classList.remove('active');
                 loginForm.classList.add('active');
                 // Limpiar formulario
                 registerForm.reset();
             } else {
-                alert('Error: ' + data.message);
+                Swal.fire({ icon: 'error', title: 'Error', text: data.message });
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Error al conectar con el servidor');
+            Swal.fire({ icon: 'error', title: 'Error', text: 'Error al conectar con el servidor' });
         });
     });
 

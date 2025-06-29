@@ -26,16 +26,16 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                alert('Clasificación agregada exitosamente');
+                Swal.fire({ icon: 'success', title: 'Éxito', text: 'Clasificación agregada exitosamente' });
                 document.getElementById('addClassificationForm').reset();
                 loadClassifications();
             } else {
-                alert('Error: ' + data.message);
+                Swal.fire({ icon: 'error', title: 'Error', text: 'Error: ' + data.message });
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Error al agregar la clasificación');
+            Swal.fire({ icon: 'error', title: 'Error', text: 'Error al agregar la clasificación' });
         });
     });
 });
@@ -92,18 +92,61 @@ function displayClassifications(classifications) {
 }
 
 function editClassification(id) {
-    const newName = prompt('Ingrese el nuevo nombre de la clasificación:');
-    if (newName) {
-        const newAgeRange = prompt('Ingrese el nuevo rango de edad:');
-        if (newAgeRange) {
-            const newDescription = prompt('Ingrese la nueva descripción:');
-            
+    Swal.fire({
+        title: 'Ingrese el nuevo nombre de la clasificación:',
+        input: 'text',
+        showCancelButton: true,
+        inputValidator: (value) => {
+            if (!value) return '¡Debes ingresar un valor!';
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const newName = result.value;
+            const newAgeRange = prompt('Ingrese el nuevo rango de edad:');
+            if (newAgeRange) {
+                const newDescription = prompt('Ingrese la nueva descripción:');
+                
+                const formData = new FormData();
+                formData.append('action', 'updateClassification');
+                formData.append('id', id);
+                formData.append('name', newName);
+                formData.append('ageRange', newAgeRange);
+                formData.append('description', newDescription);
+
+                fetch('php/clasificaciones.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({ icon: 'success', title: 'Éxito', text: 'Clasificación actualizada exitosamente' });
+                        loadClassifications();
+                    } else {
+                        Swal.fire({ icon: 'error', title: 'Error', text: 'Error: ' + data.message });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire({ icon: 'error', title: 'Error', text: 'Error al actualizar la clasificación' });
+                });
+            }
+        }
+    });
+}
+
+function deleteClassification(id) {
+    Swal.fire({
+        title: '¿Está seguro de que desea eliminar esta clasificación?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
             const formData = new FormData();
-            formData.append('action', 'updateClassification');
+            formData.append('action', 'deleteClassification');
             formData.append('id', id);
-            formData.append('name', newName);
-            formData.append('ageRange', newAgeRange);
-            formData.append('description', newDescription);
 
             fetch('php/clasificaciones.php', {
                 method: 'POST',
@@ -112,42 +155,16 @@ function editClassification(id) {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    alert('Clasificación actualizada exitosamente');
+                    Swal.fire({ icon: 'success', title: 'Éxito', text: 'Clasificación eliminada exitosamente' });
                     loadClassifications();
                 } else {
-                    alert('Error: ' + data.message);
+                    Swal.fire({ icon: 'error', title: 'Error', text: 'Error: ' + data.message });
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Error al actualizar la clasificación');
+                Swal.fire({ icon: 'error', title: 'Error', text: 'Error al eliminar la clasificación' });
             });
         }
-    }
-}
-
-function deleteClassification(id) {
-    if (confirm('¿Está seguro de que desea eliminar esta clasificación?')) {
-        const formData = new FormData();
-        formData.append('action', 'deleteClassification');
-        formData.append('id', id);
-
-        fetch('php/clasificaciones.php', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Clasificación eliminada exitosamente');
-                loadClassifications();
-            } else {
-                alert('Error: ' + data.message);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Error al eliminar la clasificación');
-        });
-    }
+    });
 } 

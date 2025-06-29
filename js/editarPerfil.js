@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const newImage = document.getElementById('newProfileImage').files[0];
 
         if (password && password !== confirmPassword) {
-            alert('Las contraseñas no coinciden');
+            Swal.fire({ icon: 'warning', title: 'Advertencia', text: 'Las contraseñas no coinciden' });
             return;
         }
 
@@ -75,16 +75,16 @@ document.addEventListener('DOMContentLoaded', function() {
                     image: data.user.image || user.image
                 };
                 localStorage.setItem('user', JSON.stringify(updatedUser));
-                
-                alert('Perfil actualizado exitosamente');
-                window.location.href = 'dashboard.html';
+                Swal.fire({ icon: 'success', title: 'Éxito', text: 'Perfil actualizado exitosamente' }).then(() => {
+                    window.location.href = 'dashboard.html';
+                });
             } else {
-                alert('Error: ' + data.message);
+                Swal.fire({ icon: 'error', title: 'Error', text: 'Error: ' + data.message });
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Error al actualizar el perfil');
+            Swal.fire({ icon: 'error', title: 'Error', text: 'Error al actualizar el perfil' });
         });
     });
 }); 

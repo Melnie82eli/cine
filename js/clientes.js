@@ -123,32 +123,40 @@ function displayClients(clients) {
 
 function viewClientDetails(id) {
     // Implementar vista detallada del cliente
-    alert('Función de vista detallada en desarrollo');
+    Swal.fire({ icon: 'info', title: 'En desarrollo', text: 'Función de vista detallada en desarrollo' });
 }
 
 function deleteClient(id) {
-    if (confirm('¿Está seguro de que desea eliminar este cliente?')) {
-        const formData = new FormData();
-        formData.append('action', 'deleteClient');
-        formData.append('id', id);
+    Swal.fire({
+        title: '¿Está seguro de que desea eliminar este cliente?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const formData = new FormData();
+            formData.append('action', 'deleteClient');
+            formData.append('id', id);
 
-        fetch('php/clientes.php', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Cliente eliminado exitosamente');
-                loadClients();
-                loadClientStats();
-            } else {
-                alert('Error: ' + data.message);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Error al eliminar el cliente');
-        });
-    }
+            fetch('php/clientes.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({ icon: 'success', title: 'Éxito', text: 'Cliente eliminado exitosamente' });
+                    loadClients();
+                    loadClientStats();
+                } else {
+                    Swal.fire({ icon: 'error', title: 'Error', text: 'Error: ' + data.message });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({ icon: 'error', title: 'Error', text: 'Error al eliminar el cliente' });
+            });
+        }
+    });
 } 

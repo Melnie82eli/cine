@@ -35,16 +35,16 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                alert('Película agregada exitosamente');
+                Swal.fire({ icon: 'success', title: 'Éxito', text: 'Película agregada exitosamente' });
                 document.getElementById('addMovieForm').reset();
                 loadMovies();
             } else {
-                alert('Error: ' + data.message);
+                Swal.fire({ icon: 'error', title: 'Error', text: 'Error: ' + data.message });
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Error al agregar la película');
+            Swal.fire({ icon: 'error', title: 'Error', text: 'Error al agregar la película' });
         });
     });
 });
@@ -151,31 +151,43 @@ function displayMovies(movies) {
 
 function editMovie(id) {
     // Implementar edición de película
-    alert('Función de edición en desarrollo');
+    Swal.fire({
+        title: 'En desarrollo',
+        text: 'Función de edición en desarrollo',
+        icon: 'info'
+    });
 }
 
 function deleteMovie(id) {
-    if (confirm('¿Está seguro de que desea eliminar esta película?')) {
-        const formData = new FormData();
-        formData.append('action', 'deleteMovie');
-        formData.append('id', id);
+    Swal.fire({
+        title: '¿Está seguro de que desea eliminar esta película?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const formData = new FormData();
+            formData.append('action', 'deleteMovie');
+            formData.append('id', id);
 
-        fetch('php/peliculas.php', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Película eliminada exitosamente');
-                loadMovies();
-            } else {
-                alert('Error: ' + data.message);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Error al eliminar la película');
-        });
-    }
+            fetch('php/peliculas.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({ icon: 'success', title: 'Éxito', text: 'Película eliminada exitosamente' });
+                    loadMovies();
+                } else {
+                    Swal.fire({ icon: 'error', title: 'Error', text: 'Error: ' + data.message });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({ icon: 'error', title: 'Error', text: 'Error al eliminar la película' });
+            });
+        }
+    });
 } 
