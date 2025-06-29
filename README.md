@@ -31,7 +31,7 @@ Un sistema completo de gestión para un cine con panel de administración, gesti
 
 2. **Crear la base de datos**:
    - Abre phpMyAdmin
-   - Crea una nueva base de datos llamada `cine_db`
+   - Crea una nueva base de datos llamada `cine`
    - El sistema creará automáticamente las tablas necesarias
 
 3. **Configurar la base de datos** (si es necesario):
@@ -39,7 +39,7 @@ Un sistema completo de gestión para un cine con panel de administración, gesti
    - Modifica las credenciales de conexión si son diferentes:
      ```php
      $host = 'localhost';
-     $dbname = 'cine_db';
+     $dbname = 'cine';
      $username = 'root';
      $password = '';
      ```

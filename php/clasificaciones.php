@@ -10,7 +10,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'admin') {
 
 // Configuración de la base de datos
 $host = 'localhost';
-$dbname = 'cine_db';
+$dbname = 'cine';
 $username = 'root';
 $password = '';
 
