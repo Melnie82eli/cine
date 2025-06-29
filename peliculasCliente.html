@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Cartelera - Cliente</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body { background: #e3eefd; font-family: 'Segoe UI', sans-serif; }
+        .pelicula-card { background: #fff; border-radius: 12px; box-shadow: 0 2px 8px #b3c6ff; margin: 20px; padding: 20px; display: inline-block; width: 220px; vertical-align: top; }
+        .pelicula-card img { width: 100%; height: 300px; object-fit: cover; border-radius: 8px; }
+        .btn-azul { background: #3b5bdb; color: #fff; border: none; border-radius: 6px; padding: 10px 20px; cursor: pointer; margin-top: 10px; }
+        .btn-azul:hover { background: #274690; }
+        .estrella { color: #ffd700; font-size: 22px; cursor: pointer; }
+        .estrella.inactiva { color: #b0b0b0; }
+    </style>
+</head>
+<body>
+    <h1 style="color:#274690;text-align:center;">Cartelera de Películas</h1>
+    <div id="peliculasContainer" style="text-align:center;"></div>
+
+    <!-- Modal -->
+    <div id="modalPelicula" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.7); align-items:center; justify-content:center;">
+        <div id="modalContent" style="background:#fff; border-radius:12px; padding:30px; width:400px; margin:auto; position:relative;">
+            <span onclick="cerrarModal()" style="position:absolute;top:10px;right:20px;cursor:pointer;font-size:22px;">&times;</span>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+    <script src="js/peliculasCliente.js"></script>
+</body>
+</html> 
