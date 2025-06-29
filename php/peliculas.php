@@ -73,7 +73,7 @@ switch($action) {
         }
         
         try {
-            $stmt = $pdo->prepare("INSERT INTO peliculas (titulo, anio, duracion, precio, categoria, clasificacion, director, reparto, sinopsis, poster) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt = $pdo->prepare("INSERT INTO peliculas (titulo, anio, duracion, precio, categoria_id, clasificacion_id, director, reparto, sinopsis, poster) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
             $stmt->execute([$title, $year, $duration, $price, $category, $classification, $director, $cast, $synopsis, $posterBase64]);
             
             echo json_encode(['success' => true, 'message' => 'Película agregada exitosamente']);
@@ -180,10 +180,10 @@ switch($action) {
 
         try {
             if ($posterBase64) {
-                $stmt = $pdo->prepare("UPDATE peliculas SET titulo = ?, anio = ?, duracion = ?, precio = ?, categoria = ?, clasificacion = ?, director = ?, reparto = ?, sinopsis = ?, poster = ? WHERE id = ?");
+                $stmt = $pdo->prepare("UPDATE peliculas SET titulo = ?, anio = ?, duracion = ?, precio = ?, categoria_id = ?, clasificacion_id = ?, director = ?, reparto = ?, sinopsis = ?, poster = ? WHERE id = ?");
                 $stmt->execute([$title, $year, $duration, $price, $category, $classification, $director, $cast, $synopsis, $posterBase64, $id]);
             } else {
-                $stmt = $pdo->prepare("UPDATE peliculas SET titulo = ?, anio = ?, duracion = ?, precio = ?, categoria = ?, clasificacion = ?, director = ?, reparto = ?, sinopsis = ? WHERE id = ?");
+                $stmt = $pdo->prepare("UPDATE peliculas SET titulo = ?, anio = ?, duracion = ?, precio = ?, categoria_id = ?, clasificacion_id = ?, director = ?, reparto = ?, sinopsis = ? WHERE id = ?");
                 $stmt->execute([$title, $year, $duration, $price, $category, $classification, $director, $cast, $synopsis, $id]);
             }
             echo json_encode(['success' => true, 'message' => 'Película actualizada exitosamente']);

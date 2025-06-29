@@ -168,13 +168,41 @@ function editMovie(id) {
                     <input id='swal-input-anio' class='swal2-input' type='number' min='1900' max='2100' placeholder='Año' value='${movie.anio}'>
                     <input id='swal-input-duracion' class='swal2-input' type='number' min='1' placeholder='Duración (min)' value='${movie.duracion}'>
                     <input id='swal-input-precio' class='swal2-input' type='number' min='0' step='0.01' placeholder='Precio' value='${movie.precio}'>
-                    <input id='swal-input-categoria' class='swal2-input' placeholder='Categoría' value='${movie.categoria}'>
-                    <input id='swal-input-clasificacion' class='swal2-input' placeholder='Clasificación' value='${movie.clasificacion}'>
+                    <select id='swal-input-categoria' class='swal2-input'></select>
+                    <select id='swal-input-clasificacion' class='swal2-input'></select>
                     <input id='swal-input-director' class='swal2-input' placeholder='Director' value='${movie.director}'>
                     <input id='swal-input-reparto' class='swal2-input' placeholder='Reparto' value='${movie.reparto}'>
                     <textarea id='swal-input-sinopsis' class='swal2-textarea' placeholder='Sinopsis'>${movie.sinopsis || ''}</textarea>
                     <label style='display:block;margin-top:10px;'>Cambiar imagen: <input type='file' id='swal-input-poster' accept='image/*'></label>
                 `,
+                didOpen: () => {
+                    // Cargar categorías y seleccionar la actual
+                    fetch('php/categorias.php?action=getCategories')
+                        .then(response => response.json())
+                        .then(data => {
+                            const select = document.getElementById('swal-input-categoria');
+                            data.categories.forEach(category => {
+                                const option = document.createElement('option');
+                                option.value = category.id;
+                                option.textContent = category.nombre;
+                                if (category.id == movie.categoria_id) option.selected = true;
+                                select.appendChild(option);
+                            });
+                        });
+                    // Cargar clasificaciones y seleccionar la actual
+                    fetch('php/clasificaciones.php?action=getClassifications')
+                        .then(response => response.json())
+                        .then(data => {
+                            const select = document.getElementById('swal-input-clasificacion');
+                            data.classifications.forEach(classification => {
+                                const option = document.createElement('option');
+                                option.value = classification.id;
+                                option.textContent = `${classification.nombre} (${classification.rango_edad})`;
+                                if (classification.id == movie.clasificacion_id) option.selected = true;
+                                select.appendChild(option);
+                            });
+                        });
+                },
                 focusConfirm: false,
                 showCancelButton: true,
                 confirmButtonText: 'Guardar',
