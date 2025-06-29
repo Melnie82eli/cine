@@ -63,8 +63,8 @@
                             <button type="submit" class="btn-login" style="width: auto; padding: 15px 40px;">
                                 <i class="fas fa-save"></i> Guardar Cambios
                             </button>
-                            <a href="dashboard.html" class="btn-register" style="display: inline-block; margin-left: 15px; padding: 15px 40px; text-decoration: none;">
-                                <i class="fas fa-arrow-left"></i> Volver al Dashboard
+                            <a id="volverBtn" href="#" class="btn-register" style="display: inline-block; margin-left: 15px; padding: 15px 40px; text-decoration: none;">
+                                <i class="fas fa-arrow-left"></i> Volver
                             </a>
                         </div>
                     </form>
@@ -76,5 +76,17 @@
     <script src="js/sweetalert2.all.min.js"></script>
     <script src="js/dashboard.js"></script>
     <script src="js/editarPerfil.js"></script>
+    <script>
+        // Cambiar el botón de volver según el rol
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        const volverBtn = document.getElementById('volverBtn');
+        if (user.role === 'admin') {
+            volverBtn.href = 'dashboard.html';
+            volverBtn.innerHTML = '<i class="fas fa-arrow-left"></i> Volver al Dashboard';
+        } else {
+            volverBtn.href = 'peliculasCliente.html';
+            volverBtn.innerHTML = '<i class="fas fa-arrow-left"></i> Volver a Cartelera';
+        }
+    </script>
 </body>
 </html> 

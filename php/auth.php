@@ -131,13 +131,13 @@ if ($action === 'login') {
     }
     
 } elseif ($action === 'updateProfile') {
-    // Verificar si el usuario está logueado
-    if (!isset($_SESSION['user_id'])) {
+    // Permitir actualizar perfil si viene el id por POST o por sesión
+    $userId = $_SESSION['user_id'] ?? ($_POST['id'] ?? null);
+    if (!$userId) {
         echo json_encode(['success' => false, 'message' => 'Usuario no autenticado']);
         exit;
     }
     
-    $userId = $_SESSION['user_id'];
     $name = $_POST['name'] ?? '';
     $email = $_POST['email'] ?? '';
     $password = $_POST['password'] ?? '';

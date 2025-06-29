@@ -2,12 +2,6 @@
 session_start();
 header('Content-Type: application/json');
 
-// Verificar si el usuario está logueado y es admin
-if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'admin') {
-    echo json_encode(['success' => false, 'message' => 'Acceso denegado']);
-    exit;
-}
-
 // Configuración de la base de datos
 $host = 'localhost';
 $dbname = 'cine';
@@ -46,6 +40,15 @@ try {
 }
 
 $action = $_POST['action'] ?? $_GET['action'] ?? '';
+
+// Solo restringe las acciones de administración
+$acciones_admin = ['addMovie', 'updateMovie', 'deleteMovie'];
+if (in_array($action, $acciones_admin)) {
+    if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'admin') {
+        echo json_encode(['success' => false, 'message' => 'Acceso denegado']);
+        exit;
+    }
+}
 
 switch($action) {
     case 'addMovie':

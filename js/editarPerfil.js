@@ -1,9 +1,11 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Verificar sesión
-    if (!checkSession()) return;
-
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
-    
+    // Eliminar checkSession para no borrar la sesión
+    // const user = JSON.parse(localStorage.getItem('user') || '{}');
+    let user = JSON.parse(localStorage.getItem('user') || '{}');
+    if (!user || !user.name) {
+        window.location.href = 'index.html';
+        return;
+    }
     // Cargar datos actuales del usuario
     document.getElementById('editName').value = user.name || '';
     document.getElementById('editEmail').value = user.email || '';
@@ -53,6 +55,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const formData = new FormData();
         formData.append('action', 'updateProfile');
+        formData.append('id', user.id);
         formData.append('name', name);
         formData.append('email', email);
         formData.append('password', password);
@@ -68,15 +71,16 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(data => {
             if (data.success) {
                 // Actualizar localStorage
-                const updatedUser = {
-                    ...user,
-                    name: name,
-                    email: email,
-                    image: data.user.image || user.image
-                };
-                localStorage.setItem('user', JSON.stringify(updatedUser));
+                user.name = name;
+                user.email = email;
+                if (data.user && data.user.image) user.image = data.user.image;
+                localStorage.setItem('user', JSON.stringify(user));
                 Swal.fire({ icon: 'success', title: 'Éxito', text: 'Perfil actualizado exitosamente' }).then(() => {
-                    window.location.href = 'dashboard.html';
+                    if (user.role === 'admin') {
+                        window.location.href = 'dashboard.html';
+                    } else {
+                        window.location.href = 'peliculasCliente.html';
+                    }
                 });
             } else {
                 Swal.fire({ icon: 'error', title: 'Error', text: 'Error: ' + data.message });

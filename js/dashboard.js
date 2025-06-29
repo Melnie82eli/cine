@@ -1,26 +1,23 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Verificar si el usuario está logueado
     const user = JSON.parse(localStorage.getItem('user') || '{}');
-    
-    if (!user.id || user.role !== 'admin') {
+    if (!user.id) {
         window.location.href = 'index.html';
         return;
     }
-
     // Mostrar información del usuario
     const userAvatar = document.getElementById('userAvatar');
     const userName = document.getElementById('userName');
-
     if (user.image) {
         userAvatar.src = user.image;
     } else {
-        userAvatar.src = 'https://via.placeholder.com/50x50/667eea/ffffff?text=' + user.name.charAt(0).toUpperCase();
+        userAvatar.src = 'https://via.placeholder.com/50x50/667eea/ffffff?text=' + (user.name ? user.name.charAt(0).toUpperCase() : 'U');
     }
-
-    userName.textContent = user.name;
-
-    // Cargar datos del dashboard
-    loadDashboardData();
+    userName.textContent = user.name || user.email || 'Usuario';
+    // Cargar datos del dashboard solo si es admin
+    if (user.role === 'admin') {
+        loadDashboardData();
+    }
 });
 
 function loadDashboardData() {
@@ -32,7 +29,6 @@ function loadDashboardData() {
 function logout() {
     // Limpiar localStorage
     localStorage.removeItem('user');
-    
     // Redirigir al login
     window.location.href = 'index.html';
 }
@@ -40,12 +36,10 @@ function logout() {
 // Función para verificar sesión en todas las páginas
 function checkSession() {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
-    
-    if (!user.id || user.role !== 'admin') {
+    if (!user.id) {
         window.location.href = 'index.html';
         return false;
     }
-    
     return true;
 }
 
