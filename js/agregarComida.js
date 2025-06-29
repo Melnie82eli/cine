@@ -111,12 +111,85 @@ function displayFood(food) {
 }
 
 function editFood(id) {
-    // Implementar edición de producto
-    Swal.fire({
-        title: 'En desarrollo',
-        text: 'Función de edición en desarrollo',
-        icon: 'info'
-    });
+    // Obtener los datos actuales del producto
+    fetch(`php/comida.php?action=getFoodById&id=${id}`)
+        .then(response => response.json())
+        .then(data => {
+            if (!data.success) {
+                Swal.fire({ icon: 'error', title: 'Error', text: data.message });
+                return;
+            }
+            const food = data.food;
+            Swal.fire({
+                title: 'Editar producto',
+                html: `
+                    <div style='text-align:center;margin-bottom:10px;'>
+                        <img src='${food.imagen ? food.imagen : 'https://via.placeholder.com/150x150/667eea/ffffff?text=Producto'}' alt='${food.nombre}' style='width:120px;height:120px;object-fit:cover;border-radius:8px;margin-bottom:10px;'>
+                    </div>
+                    <input id='swal-input-nombre' class='swal2-input' placeholder='Nombre' value='${food.nombre}'>
+                    <select id='swal-input-tipo' class='swal2-input'>
+                        <option value='comida' ${food.tipo === 'comida' ? 'selected' : ''}>Comida</option>
+                        <option value='bebida' ${food.tipo === 'bebida' ? 'selected' : ''}>Bebida</option>
+                        <option value='dulce' ${food.tipo === 'dulce' ? 'selected' : ''}>Dulce</option>
+                        <option value='snack' ${food.tipo === 'snack' ? 'selected' : ''}>Snack</option>
+                    </select>
+                    <input id='swal-input-precio' class='swal2-input' type='number' min='0' step='0.01' placeholder='Precio' value='${food.precio}'>
+                    <input id='swal-input-stock' class='swal2-input' type='number' min='0' placeholder='Stock' value='${food.stock}'>
+                    <textarea id='swal-input-descripcion' class='swal2-textarea' placeholder='Descripción'>${food.descripcion || ''}</textarea>
+                    <label style='display:block;margin-top:10px;'>Cambiar imagen: <input type='file' id='swal-input-imagen' accept='image/*'></label>
+                `,
+                focusConfirm: false,
+                showCancelButton: true,
+                confirmButtonText: 'Guardar',
+                cancelButtonText: 'Cancelar',
+                preConfirm: () => {
+                    return {
+                        nombre: document.getElementById('swal-input-nombre').value,
+                        tipo: document.getElementById('swal-input-tipo').value,
+                        precio: document.getElementById('swal-input-precio').value,
+                        stock: document.getElementById('swal-input-stock').value,
+                        descripcion: document.getElementById('swal-input-descripcion').value,
+                        imagen: document.getElementById('swal-input-imagen').files[0]
+                    };
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const values = result.value;
+                    if (!values.nombre || !values.tipo || !values.precio || !values.stock) {
+                        Swal.fire({ icon: 'warning', title: 'Campos requeridos', text: 'Completa todos los campos obligatorios.' });
+                        return;
+                    }
+                    const formData = new FormData();
+                    formData.append('action', 'updateFood');
+                    formData.append('id', id);
+                    formData.append('name', values.nombre);
+                    formData.append('type', values.tipo);
+                    formData.append('price', values.precio);
+                    formData.append('stock', values.stock);
+                    formData.append('description', values.descripcion);
+                    if (values.imagen) {
+                        formData.append('image', values.imagen);
+                    }
+                    fetch('php/comida.php', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire({ icon: 'success', title: 'Éxito', text: 'Producto actualizado exitosamente' });
+                            loadFood();
+                        } else {
+                            Swal.fire({ icon: 'error', title: 'Error', text: 'Error: ' + data.message });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire({ icon: 'error', title: 'Error', text: 'Error al actualizar el producto' });
+                    });
+                }
+            });
+        });
 }
 
 function deleteFood(id) {

@@ -146,6 +146,75 @@ switch($action) {
         }
         break;
         
+    case 'getFoodById':
+        $id = $_GET['id'] ?? $_POST['id'] ?? '';
+        if (empty($id)) {
+            echo json_encode(['success' => false, 'message' => 'ID de producto es requerido']);
+            exit;
+        }
+        try {
+            $stmt = $pdo->prepare("SELECT * FROM comida WHERE id = ?");
+            $stmt->execute([$id]);
+            $food = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($food) {
+                echo json_encode(['success' => true, 'food' => $food]);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Producto no encontrado']);
+            }
+        } catch(PDOException $e) {
+            echo json_encode(['success' => false, 'message' => 'Error al obtener el producto']);
+        }
+        break;
+        
+    case 'updateFood':
+        $id = $_POST['id'] ?? '';
+        $name = $_POST['name'] ?? '';
+        $type = $_POST['type'] ?? '';
+        $price = $_POST['price'] ?? '';
+        $stock = $_POST['stock'] ?? '';
+        $description = $_POST['description'] ?? '';
+        if (empty($id) || empty($name) || empty($type) || empty($price) || empty($stock)) {
+            echo json_encode(['success' => false, 'message' => 'Todos los campos obligatorios deben estar completos']);
+            exit;
+        }
+        // Procesar nueva imagen si se subió
+        $imagePath = '';
+        if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+            $uploadDir = '../uploads/comida/';
+            if (!file_exists($uploadDir)) {
+                mkdir($uploadDir, 0777, true);
+            }
+            $fileExtension = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
+            $fileName = uniqid() . '.' . $fileExtension;
+            $uploadPath = $uploadDir . $fileName;
+            if (move_uploaded_file($_FILES['image']['tmp_name'], $uploadPath)) {
+                $imagePath = 'uploads/comida/' . $fileName;
+            }
+        }
+        try {
+            if ($imagePath) {
+                // Eliminar imagen anterior
+                $stmt = $pdo->prepare("SELECT imagen FROM comida WHERE id = ?");
+                $stmt->execute([$id]);
+                $food = $stmt->fetch(PDO::FETCH_ASSOC);
+                if ($food && $food['imagen']) {
+                    $oldImagePath = '../' . $food['imagen'];
+                    if (file_exists($oldImagePath)) {
+                        unlink($oldImagePath);
+                    }
+                }
+                $stmt = $pdo->prepare("UPDATE comida SET nombre = ?, tipo = ?, precio = ?, stock = ?, descripcion = ?, imagen = ? WHERE id = ?");
+                $stmt->execute([$name, $type, $price, $stock, $description, $imagePath, $id]);
+            } else {
+                $stmt = $pdo->prepare("UPDATE comida SET nombre = ?, tipo = ?, precio = ?, stock = ?, descripcion = ? WHERE id = ?");
+                $stmt->execute([$name, $type, $price, $stock, $description, $id]);
+            }
+            echo json_encode(['success' => true, 'message' => 'Producto actualizado exitosamente']);
+        } catch(PDOException $e) {
+            echo json_encode(['success' => false, 'message' => 'Error al actualizar el producto']);
+        }
+        break;
+        
     default:
         echo json_encode(['success' => false, 'message' => 'Acción no válida']);
         break;
