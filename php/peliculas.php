@@ -65,25 +65,16 @@ switch($action) {
         }
         
         // Procesar póster
-        $posterPath = '';
+        $posterBase64 = '';
         if (isset($_FILES['poster']) && $_FILES['poster']['error'] === UPLOAD_ERR_OK) {
-            $uploadDir = '../uploads/posters/';
-            if (!file_exists($uploadDir)) {
-                mkdir($uploadDir, 0777, true);
-            }
-            
-            $fileExtension = pathinfo($_FILES['poster']['name'], PATHINFO_EXTENSION);
-            $fileName = uniqid() . '.' . $fileExtension;
-            $uploadPath = $uploadDir . $fileName;
-            
-            if (move_uploaded_file($_FILES['poster']['tmp_name'], $uploadPath)) {
-                $posterPath = 'uploads/posters/' . $fileName;
-            }
+            $posterData = file_get_contents($_FILES['poster']['tmp_name']);
+            $posterType = mime_content_type($_FILES['poster']['tmp_name']);
+            $posterBase64 = 'data:' . $posterType . ';base64,' . base64_encode($posterData);
         }
         
         try {
-            $stmt = $pdo->prepare("INSERT INTO peliculas (titulo, anio, duracion, precio, director, reparto, sinopsis, poster, categoria_id, clasificacion_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            $stmt->execute([$title, $year, $duration, $price, $director, $cast, $synopsis, $posterPath, $category, $classification]);
+            $stmt = $pdo->prepare("INSERT INTO peliculas (titulo, anio, duracion, precio, categoria, clasificacion, director, reparto, sinopsis, poster) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt->execute([$title, $year, $duration, $price, $category, $classification, $director, $cast, $synopsis, $posterBase64]);
             
             echo json_encode(['success' => true, 'message' => 'Película agregada exitosamente']);
         } catch(PDOException $e) {
@@ -139,6 +130,65 @@ switch($action) {
             }
         } catch(PDOException $e) {
             echo json_encode(['success' => false, 'message' => 'Error al eliminar la película']);
+        }
+        break;
+        
+    case 'getMovieById':
+        $id = $_GET['id'] ?? $_POST['id'] ?? '';
+        if (empty($id)) {
+            echo json_encode(['success' => false, 'message' => 'ID de película es requerido']);
+            exit;
+        }
+        try {
+            $stmt = $pdo->prepare("SELECT * FROM peliculas WHERE id = ?");
+            $stmt->execute([$id]);
+            $movie = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($movie) {
+                echo json_encode(['success' => true, 'movie' => $movie]);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Película no encontrada']);
+            }
+        } catch(PDOException $e) {
+            echo json_encode(['success' => false, 'message' => 'Error al obtener la película']);
+        }
+        break;
+        
+    case 'updateMovie':
+        $id = $_POST['id'] ?? '';
+        $title = $_POST['title'] ?? '';
+        $year = $_POST['year'] ?? '';
+        $duration = $_POST['duration'] ?? '';
+        $price = $_POST['price'] ?? '';
+        $director = $_POST['director'] ?? '';
+        $cast = $_POST['cast'] ?? '';
+        $synopsis = $_POST['synopsis'] ?? '';
+        $category = $_POST['category'] ?? '';
+        $classification = $_POST['classification'] ?? '';
+
+        if (empty($id) || empty($title) || empty($year) || empty($duration) || empty($price) || empty($director) || empty($category) || empty($classification)) {
+            echo json_encode(['success' => false, 'message' => 'Todos los campos obligatorios deben estar completos']);
+            exit;
+        }
+
+        // Procesar póster como base64
+        $posterBase64 = '';
+        if (isset($_FILES['poster']) && $_FILES['poster']['error'] === UPLOAD_ERR_OK) {
+            $posterData = file_get_contents($_FILES['poster']['tmp_name']);
+            $posterType = mime_content_type($_FILES['poster']['tmp_name']);
+            $posterBase64 = 'data:' . $posterType . ';base64,' . base64_encode($posterData);
+        }
+
+        try {
+            if ($posterBase64) {
+                $stmt = $pdo->prepare("UPDATE peliculas SET titulo = ?, anio = ?, duracion = ?, precio = ?, categoria = ?, clasificacion = ?, director = ?, reparto = ?, sinopsis = ?, poster = ? WHERE id = ?");
+                $stmt->execute([$title, $year, $duration, $price, $category, $classification, $director, $cast, $synopsis, $posterBase64, $id]);
+            } else {
+                $stmt = $pdo->prepare("UPDATE peliculas SET titulo = ?, anio = ?, duracion = ?, precio = ?, categoria = ?, clasificacion = ?, director = ?, reparto = ?, sinopsis = ? WHERE id = ?");
+                $stmt->execute([$title, $year, $duration, $price, $category, $classification, $director, $cast, $synopsis, $id]);
+            }
+            echo json_encode(['success' => true, 'message' => 'Película actualizada exitosamente']);
+        } catch(PDOException $e) {
+            echo json_encode(['success' => false, 'message' => 'Error al actualizar la película']);
         }
         break;
         

@@ -150,12 +150,91 @@ function displayMovies(movies) {
 }
 
 function editMovie(id) {
-    // Implementar edición de película
-    Swal.fire({
-        title: 'En desarrollo',
-        text: 'Función de edición en desarrollo',
-        icon: 'info'
-    });
+    fetch(`php/peliculas.php?action=getMovieById&id=${id}`)
+        .then(response => response.json())
+        .then(data => {
+            if (!data.success) {
+                Swal.fire({ icon: 'error', title: 'Error', text: data.message });
+                return;
+            }
+            const movie = data.movie;
+            Swal.fire({
+                title: 'Editar película',
+                html: `
+                    <div style='text-align:center;margin-bottom:10px;'>
+                        <img src='${movie.poster ? movie.poster : 'img/placeholder_pelicula.png'}' alt='${movie.titulo}' style='width:100px;height:150px;object-fit:cover;border-radius:8px;margin-bottom:10px;'>
+                    </div>
+                    <input id='swal-input-titulo' class='swal2-input' placeholder='Título' value='${movie.titulo}'>
+                    <input id='swal-input-anio' class='swal2-input' type='number' min='1900' max='2100' placeholder='Año' value='${movie.anio}'>
+                    <input id='swal-input-duracion' class='swal2-input' type='number' min='1' placeholder='Duración (min)' value='${movie.duracion}'>
+                    <input id='swal-input-precio' class='swal2-input' type='number' min='0' step='0.01' placeholder='Precio' value='${movie.precio}'>
+                    <input id='swal-input-categoria' class='swal2-input' placeholder='Categoría' value='${movie.categoria}'>
+                    <input id='swal-input-clasificacion' class='swal2-input' placeholder='Clasificación' value='${movie.clasificacion}'>
+                    <input id='swal-input-director' class='swal2-input' placeholder='Director' value='${movie.director}'>
+                    <input id='swal-input-reparto' class='swal2-input' placeholder='Reparto' value='${movie.reparto}'>
+                    <textarea id='swal-input-sinopsis' class='swal2-textarea' placeholder='Sinopsis'>${movie.sinopsis || ''}</textarea>
+                    <label style='display:block;margin-top:10px;'>Cambiar imagen: <input type='file' id='swal-input-poster' accept='image/*'></label>
+                `,
+                focusConfirm: false,
+                showCancelButton: true,
+                confirmButtonText: 'Guardar',
+                cancelButtonText: 'Cancelar',
+                preConfirm: () => {
+                    return {
+                        titulo: document.getElementById('swal-input-titulo').value,
+                        anio: document.getElementById('swal-input-anio').value,
+                        duracion: document.getElementById('swal-input-duracion').value,
+                        precio: document.getElementById('swal-input-precio').value,
+                        categoria: document.getElementById('swal-input-categoria').value,
+                        clasificacion: document.getElementById('swal-input-clasificacion').value,
+                        director: document.getElementById('swal-input-director').value,
+                        reparto: document.getElementById('swal-input-reparto').value,
+                        sinopsis: document.getElementById('swal-input-sinopsis').value,
+                        poster: document.getElementById('swal-input-poster').files[0]
+                    };
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const values = result.value;
+                    if (!values.titulo || !values.anio || !values.duracion || !values.precio || !values.categoria || !values.clasificacion || !values.director) {
+                        Swal.fire({ icon: 'warning', title: 'Campos requeridos', text: 'Completa todos los campos obligatorios.' });
+                        return;
+                    }
+                    const formData = new FormData();
+                    formData.append('action', 'updateMovie');
+                    formData.append('id', id);
+                    formData.append('title', values.titulo);
+                    formData.append('year', values.anio);
+                    formData.append('duration', values.duracion);
+                    formData.append('price', values.precio);
+                    formData.append('category', values.categoria);
+                    formData.append('classification', values.clasificacion);
+                    formData.append('director', values.director);
+                    formData.append('cast', values.reparto);
+                    formData.append('synopsis', values.sinopsis);
+                    if (values.poster) {
+                        formData.append('poster', values.poster);
+                    }
+                    fetch('php/peliculas.php', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire({ icon: 'success', title: 'Éxito', text: 'Película actualizada exitosamente' });
+                            loadMovies();
+                        } else {
+                            Swal.fire({ icon: 'error', title: 'Error', text: 'Error: ' + data.message });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire({ icon: 'error', title: 'Error', text: 'Error al actualizar la película' });
+                    });
+                }
+            });
+        });
 }
 
 function deleteMovie(id) {
