@@ -74,26 +74,17 @@ switch($action) {
             exit;
         }
         
-        // Procesar imagen
-        $imagePath = '';
+        // Procesar imagen como base64
+        $imageBase64 = '';
         if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-            $uploadDir = '../uploads/comida/';
-            if (!file_exists($uploadDir)) {
-                mkdir($uploadDir, 0777, true);
-            }
-            
-            $fileExtension = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
-            $fileName = uniqid() . '.' . $fileExtension;
-            $uploadPath = $uploadDir . $fileName;
-            
-            if (move_uploaded_file($_FILES['image']['tmp_name'], $uploadPath)) {
-                $imagePath = 'uploads/comida/' . $fileName;
-            }
+            $imageData = file_get_contents($_FILES['image']['tmp_name']);
+            $imageType = mime_content_type($_FILES['image']['tmp_name']);
+            $imageBase64 = 'data:' . $imageType . ';base64,' . base64_encode($imageData);
         }
         
         try {
             $stmt = $pdo->prepare("INSERT INTO comida (nombre, tipo, precio, stock, descripcion, imagen) VALUES (?, ?, ?, ?, ?, ?)");
-            $stmt->execute([$name, $type, $price, $stock, $description, $imagePath]);
+            $stmt->execute([$name, $type, $price, $stock, $description, $imageBase64]);
             
             echo json_encode(['success' => true, 'message' => 'Producto agregado exitosamente']);
         } catch(PDOException $e) {
@@ -177,34 +168,17 @@ switch($action) {
             echo json_encode(['success' => false, 'message' => 'Todos los campos obligatorios deben estar completos']);
             exit;
         }
-        // Procesar nueva imagen si se subió
-        $imagePath = '';
+        // Procesar nueva imagen como base64
+        $imageBase64 = '';
         if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-            $uploadDir = '../uploads/comida/';
-            if (!file_exists($uploadDir)) {
-                mkdir($uploadDir, 0777, true);
-            }
-            $fileExtension = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
-            $fileName = uniqid() . '.' . $fileExtension;
-            $uploadPath = $uploadDir . $fileName;
-            if (move_uploaded_file($_FILES['image']['tmp_name'], $uploadPath)) {
-                $imagePath = 'uploads/comida/' . $fileName;
-            }
+            $imageData = file_get_contents($_FILES['image']['tmp_name']);
+            $imageType = mime_content_type($_FILES['image']['tmp_name']);
+            $imageBase64 = 'data:' . $imageType . ';base64,' . base64_encode($imageData);
         }
         try {
-            if ($imagePath) {
-                // Eliminar imagen anterior
-                $stmt = $pdo->prepare("SELECT imagen FROM comida WHERE id = ?");
-                $stmt->execute([$id]);
-                $food = $stmt->fetch(PDO::FETCH_ASSOC);
-                if ($food && $food['imagen']) {
-                    $oldImagePath = '../' . $food['imagen'];
-                    if (file_exists($oldImagePath)) {
-                        unlink($oldImagePath);
-                    }
-                }
+            if ($imageBase64) {
                 $stmt = $pdo->prepare("UPDATE comida SET nombre = ?, tipo = ?, precio = ?, stock = ?, descripcion = ?, imagen = ? WHERE id = ?");
-                $stmt->execute([$name, $type, $price, $stock, $description, $imagePath, $id]);
+                $stmt->execute([$name, $type, $price, $stock, $description, $imageBase64, $id]);
             } else {
                 $stmt = $pdo->prepare("UPDATE comida SET nombre = ?, tipo = ?, precio = ?, stock = ?, descripcion = ? WHERE id = ?");
                 $stmt->execute([$name, $type, $price, $stock, $description, $id]);

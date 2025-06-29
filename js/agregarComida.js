@@ -81,7 +81,7 @@ function displayFood(food) {
         html += `
             <div style="border: 1px solid #e1e5e9; border-radius: 10px; padding: 20px; background: #f8f9fa;">
                 <div style="text-align: center; margin-bottom: 15px;">
-                    <img src="${item.imagen || 'https://via.placeholder.com/150x150/667eea/ffffff?text=Producto'}" 
+                    <img src="${item.imagen ? item.imagen : 'img/placeholder_producto.png'}" 
                          alt="${item.nombre}" 
                          style="width: 150px; height: 150px; object-fit: cover; border-radius: 8px;">
                 </div>
@@ -124,7 +124,7 @@ function editFood(id) {
                 title: 'Editar producto',
                 html: `
                     <div style='text-align:center;margin-bottom:10px;'>
-                        <img src='${food.imagen ? food.imagen : 'https://via.placeholder.com/150x150/667eea/ffffff?text=Producto'}' alt='${food.nombre}' style='width:120px;height:120px;object-fit:cover;border-radius:8px;margin-bottom:10px;'>
+                        <img src='${food.imagen ? food.imagen : 'img/placeholder_producto.png'}' alt='${food.nombre}' style='width:120px;height:120px;object-fit:cover;border-radius:8px;margin-bottom:10px;'>
                     </div>
                     <input id='swal-input-nombre' class='swal2-input' placeholder='Nombre' value='${food.nombre}'>
                     <select id='swal-input-tipo' class='swal2-input'>
