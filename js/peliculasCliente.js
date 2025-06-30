@@ -36,10 +36,10 @@ function cargarCategorias() {
 }
 
 function mostrarCategorias() {
-    const bar = document.getElementById('categoriasBar');
-    bar.innerHTML = '<button onclick="seleccionarCategoria(null)" ' + (categoriaSeleccionada === null ? 'class="selected"' : '') + '>Todas</button>';
+    const sidebar = document.getElementById('categoriasSidebar');
+    sidebar.innerHTML = '<button class="categoria-item" onclick="seleccionarCategoria(null)" ' + (categoriaSeleccionada === null ? 'class="categoria-item selected"' : 'class="categoria-item"') + '>Todas las películas</button>';
     categorias.forEach(cat => {
-        bar.innerHTML += `<button onclick="seleccionarCategoria(${cat.id})" ${categoriaSeleccionada == cat.id ? 'class="selected"' : ''}>${cat.nombre}</button>`;
+        sidebar.innerHTML += `<button class="categoria-item" onclick="seleccionarCategoria(${cat.id})" ${categoriaSeleccionada == cat.id ? 'class="categoria-item selected"' : 'class="categoria-item"'}">${cat.nombre}</button>`;
     });
 }
 
@@ -220,33 +220,59 @@ function pagarBoletos() {
 function descargarPDFBoleto(datos, sala) {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
+    const posterUrl = peliculaSeleccionada.poster || 'https://via.placeholder.com/200x300/274690/fff?text=Película';
 
-    doc.setFontSize(18);
-    doc.text("Boleto de Cine", 20, 20);
+    // Cargar la imagen del póster y luego generar el PDF
+    toDataURL(posterUrl, function(base64Img) {
+        // Dibuja el póster
+        doc.addImage(base64Img, 'JPEG', 10, 10, 40, 60);
 
-    doc.setFontSize(12);
-    doc.text(`Pelicula: ${peliculaSeleccionada.titulo}`, 20, 35);
-    doc.text(`Sala: ${sala}`, 20, 45);
-    doc.text(`Fecha: ${datos.fecha_funcion}`, 20, 55);
-    doc.text(`Hora: ${datos.hora_funcion}`, 20, 65);
-    doc.text(`Asientos: ${datos.asientos}`, 20, 75);
-    doc.text(`Precio total: $${datos.total.toFixed(2)}`, 20, 85);
+        doc.setFontSize(18);
+        doc.text("Boleto de Cine", 60, 20);
 
-    if (datos.descuento > 0) {
-        doc.setTextColor(0, 128, 0);
-        doc.text(`¡Descuento aplicado! -$${datos.descuento.toFixed(2)}`, 20, 95);
-        doc.setTextColor(0, 0, 0);
-    }
+        doc.setFontSize(12);
+        doc.text(`Pelicula: ${peliculaSeleccionada.titulo}`, 60, 35);
+        doc.text(`Sala: ${sala}`, 60, 45);
+        doc.text(`Fecha: ${datos.fecha_funcion}`, 60, 55);
+        doc.text(`Hora: ${datos.hora_funcion}`, 60, 65);
+        doc.text(`Asientos: ${datos.asientos}`, 60, 75);
+        doc.text(`Precio total: $${datos.total.toFixed(2)}`, 60, 85);
 
-    doc.text(`Cliente: ${usuario.nombre || usuario.email}`, 20, 105);
+        if (datos.descuento > 0) {
+            doc.setTextColor(0, 128, 0);
+            doc.text(`¡Descuento aplicado! -$${datos.descuento.toFixed(2)}`, 60, 95);
+            doc.setTextColor(0, 0, 0);
+        }
 
-    doc.save(`boleto_${peliculaSeleccionada.titulo.replace(/\s+/g, '_')}.pdf`);
-    Swal.fire({
-        icon: 'success',
-        title: '¡Compra exitosa!',
-        text: 'Tu boleto ha sido descargado en PDF.',
-        confirmButtonText: 'Aceptar'
+        doc.text(`Cliente: ${usuario.nombre || usuario.email}`, 60, 105);
+
+        doc.save(`boleto_${peliculaSeleccionada.titulo.replace(/\s+/g, '_')}.pdf`);
+        Swal.fire({
+            icon: 'success',
+            title: '¡Compra exitosa!',
+            text: 'Tu boleto ha sido descargado en PDF.',
+            confirmButtonText: 'Aceptar'
+        });
     });
+}
+
+// Utilidad para convertir imagen a base64
+function toDataURL(url, callback) {
+    var xhr = new XMLHttpRequest();
+    xhr.onload = function() {
+        var reader = new FileReader();
+        reader.onloadend = function() {
+            callback(reader.result);
+        }
+        reader.readAsDataURL(xhr.response);
+    };
+    xhr.onerror = function() {
+        // Si falla, usar placeholder
+        callback('');
+    };
+    xhr.open('GET', url);
+    xhr.responseType = 'blob';
+    xhr.send();
 }
 
 function mostrarEstrellas() {
