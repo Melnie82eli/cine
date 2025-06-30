@@ -5,18 +5,45 @@
     <title>Comida - Cliente</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
-        body { background: #e3eefd; font-family: 'Segoe UI', sans-serif; }
+        body { background: #e3eefd; font-family: 'Segoe UI', sans-serif; margin:0; padding:0; }
+        .topbar { display: flex; align-items: center; justify-content: space-between; background: #274690; color: #fff; padding: 10px 30px; position: fixed; top: 0; left: 0; width: 100vw; z-index: 100; }
+        .topbar .actions button { margin-right: 10px; }
+        .topbar .user { font-weight: bold; }
+        .main-layout { display: flex; min-height: 100vh; padding-top: 60px; }
+        .sidebar { width: 250px; background: #274690; color: white; padding: 20px 0; box-shadow: 2px 0 8px rgba(0,0,0,0.1); position: fixed; left: 0; top: 60px; height: calc(100vh - 60px); overflow-y: auto; }
+        .sidebar h2 { text-align: center; margin-bottom: 20px; padding: 0 20px; color: #fff; font-size: 1.3em; }
+        .categoria-item { display: block; width: 100%; padding: 12px 20px; background: transparent; color: #fff; border: none; text-align: left; cursor: pointer; transition: all 0.3s ease; font-size: 1em; border-left: 4px solid transparent; }
+        .categoria-item:hover { background: #3b5bdb; border-left-color: #b3c6ff; }
+        .categoria-item.selected { background: #3b5bdb; border-left-color: #b3c6ff; font-weight: bold; }
+        .main-content { flex: 1; margin-left: 250px; padding: 20px; }
         .comida-card { background: #fff; border-radius: 12px; box-shadow: 0 2px 8px #b3c6ff; margin: 20px; padding: 20px; display: inline-block; width: 220px; vertical-align: top; }
         .comida-card img { width: 100%; height: 120px; object-fit: cover; border-radius: 8px; }
         .btn-azul { background: #3b5bdb; color: #fff; border: none; border-radius: 6px; padding: 10px 20px; cursor: pointer; margin-top: 10px; }
         .btn-azul:hover { background: #274690; }
+        @media (max-width: 768px) { .main-content { padding: 10px; } .sidebar { width: 200px; } .main-content { margin-left: 200px; } }
     </style>
 </head>
 <body>
-    <h1 style="color:#274690;text-align:center;">Comida y Combos</h1>
-    <div id="comidaContainer" style="text-align:center;"></div>
-    <div style="text-align:center;">
-        <button class="btn-azul" onclick="verCarrito()">Ver carrito (<span id="carritoCount">0</span>)</button>
+    <div class="topbar">
+        <div class="actions">
+            <button class="btn-azul" onclick="cerrarSesion()">Cerrar sesión</button>
+            <button class="btn-azul" onclick="editarPerfil()">Editar perfil</button>
+            <button class="btn-azul" onclick="window.location.href='peliculasCliente.html'">Películas</button>
+        </div>
+        <div class="user" id="nombreUsuario"></div>
+        <div>
+            <button class="btn-azul" onclick="verCarrito()">Ver carrito (<span id="carritoCount">0</span>)</button>
+        </div>
+    </div>
+    <div class="main-layout">
+        <div class="sidebar">
+            <h2>Categorías</h2>
+            <div id="categoriasSidebar"></div>
+        </div>
+        <div class="main-content">
+            <h1 style="color:#274690;text-align:center;">Comida y Combos</h1>
+            <div id="comidaContainer" style="text-align:center;"></div>
+        </div>
     </div>
     <div id="modalCarrito" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.7); align-items:center; justify-content:center;">
         <div id="carritoContent" style="background:#fff; border-radius:12px; padding:30px; width:400px; margin:auto; position:relative;">
@@ -24,6 +51,20 @@
             <div id="carritoBody"></div>
         </div>
     </div>
+    <script>
+        // Solo lógica para mostrar el nombre y funciones, SIN declarar 'let usuario' aquí
+        document.addEventListener('DOMContentLoaded', function() {
+            const usuario = JSON.parse(localStorage.getItem('user') || '{}');
+            document.getElementById('nombreUsuario').innerText = usuario.nombre || usuario.email || 'Usuario';
+        });
+        function cerrarSesion() {
+            localStorage.removeItem('user');
+            window.location.href = 'index.html';
+        }
+        function editarPerfil() {
+            window.location.href = 'editarPerfil.html';
+        }
+    </script>
     <script src="js/comidaCliente.js"></script>
 </body>
 </html> 

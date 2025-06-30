@@ -2,12 +2,6 @@
 session_start();
 header('Content-Type: application/json');
 
-// Verificar si el usuario está logueado y es admin
-if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'admin') {
-    echo json_encode(['success' => false, 'message' => 'Acceso denegado']);
-    exit;
-}
-
 // Configuración de la base de datos
 $host = 'localhost';
 $dbname = 'cine';
@@ -35,7 +29,6 @@ $createTable = "CREATE TABLE IF NOT EXISTS comida (
 
 try {
     $pdo->exec($createTable);
-    
     // Insertar productos por defecto si no existen
     $checkFood = $pdo->query("SELECT COUNT(*) FROM comida");
     if ($checkFood->fetchColumn() == 0) {
@@ -49,7 +42,6 @@ try {
             ['Chocolate', 'dulce', 3.50, 200, 'Chocolate de diferentes sabores'],
             ['Caramelos', 'dulce', 2.50, 300, 'Caramelos surtidos']
         ];
-        
         $insertFood = $pdo->prepare("INSERT INTO comida (nombre, tipo, precio, stock, descripcion) VALUES (?, ?, ?, ?, ?)");
         foreach ($defaultFood as $food) {
             $insertFood->execute($food);
@@ -61,6 +53,47 @@ try {
 
 $action = $_POST['action'] ?? $_GET['action'] ?? '';
 
+// Permitir getFood y getFoodById a cualquier usuario
+if ($action === 'getFood' || $action === 'getFoodById') {
+    switch($action) {
+        case 'getFood':
+            try {
+                $stmt = $pdo->query("SELECT * FROM comida ORDER BY tipo, nombre");
+                $food = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                echo json_encode(['success' => true, 'food' => $food]);
+            } catch(PDOException $e) {
+                echo json_encode(['success' => false, 'message' => 'Error al obtener los productos']);
+            }
+            break;
+        case 'getFoodById':
+            $id = $_GET['id'] ?? $_POST['id'] ?? '';
+            if (empty($id)) {
+                echo json_encode(['success' => false, 'message' => 'ID de producto es requerido']);
+                exit;
+            }
+            try {
+                $stmt = $pdo->prepare("SELECT * FROM comida WHERE id = ?");
+                $stmt->execute([$id]);
+                $food = $stmt->fetch(PDO::FETCH_ASSOC);
+                if ($food) {
+                    echo json_encode(['success' => true, 'food' => $food]);
+                } else {
+                    echo json_encode(['success' => false, 'message' => 'Producto no encontrado']);
+                }
+            } catch(PDOException $e) {
+                echo json_encode(['success' => false, 'message' => 'Error al obtener el producto']);
+            }
+            break;
+    }
+    exit;
+}
+
+// Para las demás acciones, solo admin
+if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'admin') {
+    echo json_encode(['success' => false, 'message' => 'Acceso denegado']);
+    exit;
+}
+
 switch($action) {
     case 'addFood':
         $name = $_POST['name'] ?? '';
@@ -68,12 +101,10 @@ switch($action) {
         $price = $_POST['price'] ?? '';
         $stock = $_POST['stock'] ?? '';
         $description = $_POST['description'] ?? '';
-        
         if (empty($name) || empty($type) || empty($price) || empty($stock)) {
             echo json_encode(['success' => false, 'message' => 'Todos los campos obligatorios deben estar completos']);
             exit;
         }
-        
         // Procesar imagen como base64
         $imageBase64 = '';
         if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
@@ -81,52 +112,33 @@ switch($action) {
             $imageType = mime_content_type($_FILES['image']['tmp_name']);
             $imageBase64 = 'data:' . $imageType . ';base64,' . base64_encode($imageData);
         }
-        
         try {
             $stmt = $pdo->prepare("INSERT INTO comida (nombre, tipo, precio, stock, descripcion, imagen) VALUES (?, ?, ?, ?, ?, ?)");
             $stmt->execute([$name, $type, $price, $stock, $description, $imageBase64]);
-            
             echo json_encode(['success' => true, 'message' => 'Producto agregado exitosamente']);
         } catch(PDOException $e) {
             echo json_encode(['success' => false, 'message' => 'Error al agregar el producto']);
         }
         break;
-        
-    case 'getFood':
-        try {
-            $stmt = $pdo->query("SELECT * FROM comida ORDER BY tipo, nombre");
-            $food = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            
-            echo json_encode(['success' => true, 'food' => $food]);
-        } catch(PDOException $e) {
-            echo json_encode(['success' => false, 'message' => 'Error al obtener los productos']);
-        }
-        break;
-        
     case 'deleteFood':
         $id = $_POST['id'] ?? '';
-        
         if (empty($id)) {
             echo json_encode(['success' => false, 'message' => 'ID de producto es requerido']);
             exit;
         }
-        
         try {
             // Obtener información de la imagen para eliminarla
             $stmt = $pdo->prepare("SELECT imagen FROM comida WHERE id = ?");
             $stmt->execute([$id]);
             $food = $stmt->fetch(PDO::FETCH_ASSOC);
-            
             if ($food && $food['imagen']) {
                 $imagePath = '../' . $food['imagen'];
                 if (file_exists($imagePath)) {
                     unlink($imagePath);
                 }
             }
-            
             $stmt = $pdo->prepare("DELETE FROM comida WHERE id = ?");
             $stmt->execute([$id]);
-            
             if ($stmt->rowCount() > 0) {
                 echo json_encode(['success' => true, 'message' => 'Producto eliminado exitosamente']);
             } else {
@@ -136,27 +148,6 @@ switch($action) {
             echo json_encode(['success' => false, 'message' => 'Error al eliminar el producto']);
         }
         break;
-        
-    case 'getFoodById':
-        $id = $_GET['id'] ?? $_POST['id'] ?? '';
-        if (empty($id)) {
-            echo json_encode(['success' => false, 'message' => 'ID de producto es requerido']);
-            exit;
-        }
-        try {
-            $stmt = $pdo->prepare("SELECT * FROM comida WHERE id = ?");
-            $stmt->execute([$id]);
-            $food = $stmt->fetch(PDO::FETCH_ASSOC);
-            if ($food) {
-                echo json_encode(['success' => true, 'food' => $food]);
-            } else {
-                echo json_encode(['success' => false, 'message' => 'Producto no encontrado']);
-            }
-        } catch(PDOException $e) {
-            echo json_encode(['success' => false, 'message' => 'Error al obtener el producto']);
-        }
-        break;
-        
     case 'updateFood':
         $id = $_POST['id'] ?? '';
         $name = $_POST['name'] ?? '';
@@ -188,7 +179,6 @@ switch($action) {
             echo json_encode(['success' => false, 'message' => 'Error al actualizar el producto']);
         }
         break;
-        
     default:
         echo json_encode(['success' => false, 'message' => 'Acción no válida']);
         break;

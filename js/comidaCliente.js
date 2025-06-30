@@ -1,5 +1,14 @@
 let usuario = JSON.parse(localStorage.getItem('user') || '{}');
 let comida = [];
+let comidaFiltrada = [];
+let categoriasComida = [
+    { tipo: null, nombre: 'Todos' },
+    { tipo: 'comida', nombre: 'Comida' },
+    { tipo: 'bebida', nombre: 'Bebidas' },
+    { tipo: 'dulce', nombre: 'Dulces' },
+    { tipo: 'snack', nombre: 'Snacks' }
+];
+let categoriaSeleccionada = null;
 let carrito = JSON.parse(localStorage.getItem('carritoComida') || '[]');
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -8,8 +17,23 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
     }
     cargarComida();
+    mostrarCategoriasComida();
     actualizarCarrito();
 });
+
+function mostrarCategoriasComida() {
+    const sidebar = document.getElementById('categoriasSidebar');
+    sidebar.innerHTML = '';
+    categoriasComida.forEach(cat => {
+        sidebar.innerHTML += `<button class="categoria-item${categoriaSeleccionada === cat.tipo ? ' selected' : ''}" onclick="seleccionarCategoriaComida('${cat.tipo === null ? '' : cat.tipo}')">${cat.nombre}</button>`;
+    });
+}
+
+window.seleccionarCategoriaComida = function(tipo) {
+    categoriaSeleccionada = tipo || null;
+    filtrarComida();
+    mostrarCategoriasComida();
+}
 
 function cargarComida() {
     fetch('php/comida.php?action=getFood')
@@ -17,15 +41,24 @@ function cargarComida() {
         .then(data => {
             if (data.success) {
                 comida = data.food;
-                mostrarComida();
+                filtrarComida();
             }
         });
+}
+
+function filtrarComida() {
+    if (!categoriaSeleccionada) {
+        comidaFiltrada = comida;
+    } else {
+        comidaFiltrada = comida.filter(c => c.tipo === categoriaSeleccionada);
+    }
+    mostrarComida();
 }
 
 function mostrarComida() {
     const cont = document.getElementById('comidaContainer');
     cont.innerHTML = '';
-    comida.forEach(c => {
+    (comidaFiltrada.length ? comidaFiltrada : comida).forEach(c => {
         cont.innerHTML += `
             <div class="comida-card">
                 <img src="${c.imagen || 'https://via.placeholder.com/200x120/274690/fff?text=Comida'}" alt="${c.nombre}">
