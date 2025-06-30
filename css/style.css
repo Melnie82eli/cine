@@ -8,9 +8,7 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: block;
 }
 
 .container {
@@ -347,5 +345,222 @@ body {
     
     .dashboard-grid {
         grid-template-columns: 1fr;
+    }
+}
+
+/* --- ESTILOS PARA LA CARTELERA DE PELÍCULAS CLIENTE --- */
+
+body.peliculas-cliente {
+    background: #e9f1ff;
+    min-height: 100vh;
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.peliculas-cliente .topbar {
+    width: 100vw;
+    background: #274690;
+    color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 40px 18px 220px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(39,70,144,0.08);
+}
+.peliculas-cliente .topbar .actions {
+    display: flex;
+    gap: 12px;
+}
+.peliculas-cliente .topbar .btn-azul {
+    background: #3b5cb8;
+    color: #fff;
+    border: none;
+    border-radius: 7px;
+    padding: 8px 18px;
+    font-size: 1em;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 8px rgba(39,70,144,0.08);
+}
+.peliculas-cliente .topbar .btn-azul:hover {
+    background: #274690;
+    box-shadow: 0 4px 16px rgba(39,70,144,0.15);
+}
+.peliculas-cliente .topbar .user {
+    color: #fff;
+    font-weight: 600;
+    font-size: 1.1em;
+    letter-spacing: 0.5px;
+}
+
+.peliculas-cliente .main-layout {
+    display: flex;
+    margin-top: 80px;
+    min-height: calc(100vh - 80px);
+}
+
+.peliculas-cliente .sidebar {
+    width: 200px;
+    background: #274690;
+    color: #fff;
+    padding: 40px 20px 20px 20px;
+    border-radius: 0 18px 18px 0;
+    box-shadow: 2px 0 16px rgba(39,70,144,0.08);
+    min-height: calc(100vh - 80px);
+    position: fixed;
+    top: 80px;
+    left: 0;
+    z-index: 10;
+}
+.peliculas-cliente .sidebar h2 {
+    font-size: 1.4em;
+    margin-bottom: 18px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: #fff;
+    text-align: center;
+}
+.peliculas-cliente #categoriasSidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.peliculas-cliente .categoria-item {
+    background: rgba(255,255,255,0.13);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 0;
+    font-size: 1em;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+.peliculas-cliente .categoria-item.selected, .peliculas-cliente .categoria-item:hover {
+    background: #fff;
+    color: #274690;
+}
+
+.peliculas-cliente .main-content {
+    flex: 1;
+    margin-left: 220px;
+    padding: 40px 40px 40px 40px;
+    min-height: calc(100vh - 80px);
+    background: #e9f1ff;
+}
+
+.peliculas-cliente #busquedaPeliculas {
+    border: 1.5px solid #b3c6ff;
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 1em;
+    outline: none;
+    transition: border 0.2s;
+    box-shadow: 0 2px 8px rgba(102,126,234,0.07);
+}
+.peliculas-cliente #busquedaPeliculas:focus {
+    border: 1.5px solid #274690;
+}
+
+.peliculas-cliente #peliculasContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 32px;
+    justify-content: center;
+    margin-top: 30px;
+}
+.peliculas-cliente .pelicula-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 18px rgba(39,70,144,0.10);
+    padding: 18px 18px 24px 18px;
+    width: 220px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.18s, box-shadow 0.18s;
+    position: relative;
+}
+.peliculas-cliente .pelicula-card:hover {
+    transform: translateY(-7px) scale(1.03);
+    box-shadow: 0 10px 32px rgba(39,70,144,0.18);
+}
+.peliculas-cliente .pelicula-card img {
+    width: 180px;
+    height: 260px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 14px;
+    box-shadow: 0 2px 8px #b3c6ff44;
+}
+.peliculas-cliente .pelicula-card h3 {
+    font-size: 1.15em;
+    margin: 0 0 6px 0;
+    color: #274690;
+    font-weight: 700;
+    text-align: center;
+}
+.peliculas-cliente .pelicula-card p {
+    color: #888;
+    font-size: 0.98em;
+    margin-bottom: 10px;
+}
+.peliculas-cliente .pelicula-card .btn-azul {
+    margin-top: 8px;
+    width: 100%;
+    background: #3b5cb8;
+    color: #fff;
+    border-radius: 7px;
+    border: none;
+    padding: 8px 0;
+    font-weight: 600;
+    font-size: 1em;
+    transition: background 0.2s;
+}
+.peliculas-cliente .pelicula-card .btn-azul:hover {
+    background: #274690;
+}
+
+/* Responsive para cartelera */
+@media (max-width: 1100px) {
+    .peliculas-cliente .main-content {
+        padding: 30px 10px 30px 10px;
+    }
+    .peliculas-cliente .sidebar {
+        padding: 20px 8px 8px 8px;
+        width: 120px;
+    }
+    .peliculas-cliente .main-content {
+        margin-left: 120px;
+    }
+}
+@media (max-width: 700px) {
+    .peliculas-cliente .main-layout {
+        flex-direction: column;
+    }
+    .peliculas-cliente .sidebar {
+        position: static;
+        width: 100vw;
+        border-radius: 0 0 18px 18px;
+        min-height: unset;
+        top: unset;
+        left: unset;
+        box-shadow: none;
+        padding: 18px 10px 10px 10px;
+        text-align: center;
+    }
+    .peliculas-cliente .main-content {
+        margin-left: 0;
+        padding: 18px 4vw 18px 4vw;
+    }
+    .peliculas-cliente .topbar {
+        padding: 12px 10px 12px 10px;
+        flex-direction: column;
+        gap: 10px;
     }
 } 

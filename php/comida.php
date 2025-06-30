@@ -88,6 +88,41 @@ if ($action === 'getFood' || $action === 'getFoodById') {
     exit;
 }
 
+// Nueva acción para descontar stock desde el cliente
+if ($action === 'descontarStock') {
+    $productos = json_decode($_POST['productos'] ?? '[]', true);
+    if (!is_array($productos) || empty($productos)) {
+        echo json_encode(['success' => false, 'message' => 'No se recibieron productos para descontar']);
+        exit;
+    }
+    try {
+        $pdo->beginTransaction();
+        foreach ($productos as $prod) {
+            $id = $prod['id'] ?? 0;
+            $cantidad = $prod['cantidad'] ?? 0;
+            if ($id && $cantidad > 0) {
+                // Verificar stock suficiente
+                $stmt = $pdo->prepare('SELECT stock FROM comida WHERE id = ? FOR UPDATE');
+                $stmt->execute([$id]);
+                $stockActual = $stmt->fetchColumn();
+                if ($stockActual === false || $stockActual < $cantidad) {
+                    $pdo->rollBack();
+                    echo json_encode(['success' => false, 'message' => 'Stock insuficiente para el producto ID ' . $id]);
+                    exit;
+                }
+                $stmt = $pdo->prepare('UPDATE comida SET stock = stock - ? WHERE id = ?');
+                $stmt->execute([$cantidad, $id]);
+            }
+        }
+        $pdo->commit();
+        echo json_encode(['success' => true]);
+    } catch(PDOException $e) {
+        $pdo->rollBack();
+        echo json_encode(['success' => false, 'message' => 'Error al descontar stock']);
+    }
+    exit;
+}
+
 // Para las demás acciones, solo admin
 if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'admin') {
     echo json_encode(['success' => false, 'message' => 'Acceso denegado']);
